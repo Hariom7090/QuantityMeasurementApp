@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="measurement" options="-parameters" />
+      <module name="measurement" options="-parameters --add-modules jdk.internal.vm.ci --add-exports jdk.internal.vm.ci/jdk.vm.ci.riscv64=ALL-UNNAMED" />
     </option>
   </component>
 </project>
