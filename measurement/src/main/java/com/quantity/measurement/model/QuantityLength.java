@@ -3,6 +3,7 @@ import com.quantity.measurement.enums.LengthUnit;
 
 public class QuantityLength {
 
+    private final double EPSILON = 1e-6;
     private final double value;
     private final LengthUnit unit;
 
@@ -23,18 +24,9 @@ public class QuantityLength {
         QuantityLength other = (QuantityLength) obj;
         double thisInFeet=this.unit.toFeet(this.value);
         double otherInFeet=other.unit.toFeet(other.value);
-        return Double.compare(thisInFeet, otherInFeet) == 0;
+        return Math.abs(thisInFeet-otherInFeet) < EPSILON;
     }
 
 
-    public static void main(String[] args) {
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCH);
 
-        QuantityLength q3 = new QuantityLength(1.0, LengthUnit.INCH);
-        QuantityLength q4 = new QuantityLength(1.0, LengthUnit.INCH);
-
-        System.out.println(q1.equals(q2));
-        System.out.println(q3.equals(q4));
-    }
 }
