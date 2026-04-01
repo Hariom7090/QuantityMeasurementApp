@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class  MeasurementApplicationTests {
-	private final double EPSILON = 1e-6;
+
 	@Test
 	void testEquality_FeetToFeet_SameValue() {
 		QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
