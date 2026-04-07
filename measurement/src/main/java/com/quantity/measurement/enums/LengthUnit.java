@@ -12,13 +12,18 @@ public enum LengthUnit {
 
     CENTIMETERS(0.393701);
 
-    private final double toInchFactor;
+    private final double toFeetFactor;
 
     LengthUnit(double toInchFactor) {
-        this.toInchFactor = toInchFactor;
+        this.toFeetFactor = toInchFactor;
     }
 
     public double toFeet(double value) {
-        return value * toInchFactor;
+        return value * toFeetFactor;
+    }
+
+    public double fromFeet(double value){
+        return value / toFeetFactor;
+
     }
 }
