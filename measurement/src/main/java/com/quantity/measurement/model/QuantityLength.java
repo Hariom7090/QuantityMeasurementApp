@@ -12,6 +12,14 @@ public class QuantityLength {
         this.value = value;
         this.unit = unit;
     }
+    public double getValue() {
+        return this.value;
+    }
+
+    public LengthUnit getUnit() {
+        return this.unit;
+    }
+
 
     public double toConvert(LengthUnit targetUnit){
         return convert(this.value,this.unit,targetUnit);
@@ -26,6 +34,22 @@ public class QuantityLength {
         }
         double valueInFeet = sourceUnit.toFeet(value);
         return targetUnit.fromFeet(valueInFeet);
+    }
+
+
+     public  QuantityLength add(QuantityLength other) {
+
+
+        if (other == null) {throw new IllegalArgumentException();}
+        if (!Double.isFinite(this.value)){throw new IllegalArgumentException();}
+
+        double thisInFeet = this.unit.toFeet(this.getValue());
+        double otherInFeet = other.unit.toFeet(other.getValue());
+
+        double sumInFeet = thisInFeet + otherInFeet;
+        double result = this.unit.fromFeet(sumInFeet);
+
+        return new QuantityLength(result, this.unit);
     }
 
     @Override
