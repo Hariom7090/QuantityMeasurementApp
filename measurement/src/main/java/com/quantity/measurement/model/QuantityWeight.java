@@ -1,60 +1,49 @@
 package com.quantity.measurement.model;
+
 import com.quantity.measurement.enums.WeightUnit;
 
 public class QuantityWeight {
-    private final double value;
-    private final WeightUnit unit;
-    private static final double EPSILON = 1e-6;
+
+    private final Quantity<WeightUnit> quantity;
 
     public QuantityWeight(double value, WeightUnit unit) {
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
-        }
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Value must be a finite number");
-        }
-        this.value = value;
-        this.unit = unit;
+        if (unit == null)
+            throw new NullPointerException("Unit should not be null");
+
+        this.quantity = new Quantity<>(value, unit);
     }
 
-    public QuantityWeight convertTo(WeightUnit targetUnit) {
-        double baseValue = unit.convertToBaseUnit(this.value);
-        double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
-        return new QuantityWeight(convertedValue, targetUnit);
+    public double getValue() {
+        return quantity.getValue();
+    }
+
+    public WeightUnit getUnit() {
+        return quantity.getUnit();
     }
 
     public QuantityWeight add(QuantityWeight other) {
-        return add(other, this.unit);
+        Quantity<WeightUnit> result = quantity.add(other.quantity);
+        return new QuantityWeight(result.getValue(), result.getUnit());
     }
 
     public QuantityWeight add(QuantityWeight other, WeightUnit targetUnit) {
-        double sumInBase = this.unit.convertToBaseUnit(this.value) +
-                other.unit.convertToBaseUnit(other.value);
-        double finalValue = targetUnit.convertFromBaseUnit(sumInBase);
-        return new QuantityWeight(finalValue, targetUnit);
+        Quantity<WeightUnit> result = quantity.add(other.quantity, targetUnit);
+        return new QuantityWeight(result.getValue(), result.getUnit());
+    }
+
+    public QuantityWeight toConvert(WeightUnit targetUnit) {
+        Quantity<WeightUnit> result = quantity.convertTo(targetUnit);
+        return new QuantityWeight(result.getValue(), result.getUnit());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        QuantityWeight that = (QuantityWeight) obj;
-
-
-        double v1 = this.unit.convertToBaseUnit(this.value);
-        double v2 = that.unit.convertToBaseUnit(that.value);
-
-
-        return Math.abs(v1 - v2) < EPSILON;
+    public boolean equals(Object o) {
+        if (!(o instanceof QuantityWeight)) return false;
+        return this.quantity.equals(((QuantityWeight) o).quantity);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(Math.round(unit.convertToBaseUnit(value) * 1000000.0));
+        return quantity.hashCode();
     }
-//    @Override
-//    public String toString() {
-//        return String.format("%s %s", value, unit);
-//    }
 }
