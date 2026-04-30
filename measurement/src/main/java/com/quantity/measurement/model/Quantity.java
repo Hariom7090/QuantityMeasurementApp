@@ -5,22 +5,22 @@ import java.util.Objects;
 
 public class Quantity<U extends IMeasurable> {
 
-    private static final double EPSILON = 1e-6;
-
+    private final double EPSILON = 1e-6;
     private final double value;
     private final U unit;
 
+    // Constructor
     public Quantity(double value, U unit) {
         if (unit == null)
             throw new NullPointerException("Unit shouldn't be null");
-
-        if (!Double.isFinite(value))
+        if (Double.isNaN(value))
             throw new IllegalArgumentException("Invalid value");
 
         this.value = value;
         this.unit = unit;
     }
 
+    // Getters
     public double getValue() {
         return value;
     }
@@ -29,8 +29,8 @@ public class Quantity<U extends IMeasurable> {
         return unit;
     }
 
-    // ✅ Conversion
-    public Quantity<U> convertTo(U targetUnit) {
+    // Conversion
+    public Quantity<U> toConvert(U targetUnit) {
         if (targetUnit == null)
             throw new NullPointerException("Target unit cannot be null");
 
@@ -40,40 +40,72 @@ public class Quantity<U extends IMeasurable> {
         return new Quantity<>(converted, targetUnit);
     }
 
-    // ✅ Alias for your test cases
-    public Quantity<U> toConvert(U targetUnit) {
-        return convertTo(targetUnit);
-    }
-
-    // ✅ Add
+    // Add
     public Quantity<U> add(Quantity<U> other) {
-        if (other == null)
-            throw new NullPointerException("Other quantity cannot be null");
-
         return add(other, this.unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        if (other == null)
-            throw new NullPointerException("Other quantity cannot be null");
+        if (other == null || targetUnit == null)
+            throw new NullPointerException("Second quantity & targetUnit must not be null");
 
-        if (targetUnit == null)
-            throw new NullPointerException("Target unit cannot be null");
+        if (!this.unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Cannot operate on different measurement categories");
 
-        double thisInBase = this.unit.convertToBaseUnit(this.value);
-        double otherInBase = other.getUnit().convertToBaseUnit(other.getValue());
+        double thisBase = this.unit.convertToBaseUnit(this.value);
+        double otherBase = other.unit.convertToBaseUnit(other.value);
 
-        double sumInBase = thisInBase + otherInBase;
+        double sumBase = thisBase + otherBase;
+        double result = targetUnit.convertFromBaseUnit(sumBase);
 
-        double result = targetUnit.convertFromBaseUnit(sumInBase);
+        return new Quantity<>(result, targetUnit);
+    }
+    // Subtraction
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+
+        if (other == null || targetUnit == null)
+            throw new NullPointerException(
+                    "Quantity and Target Unit must not be empty");
+
+        if (!this.unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException(
+                    "Cannot operate on different measurement categories");
+
+        double thisBase = this.unit.convertToBaseUnit(this.getValue());
+        double otherBase = other.unit.convertToBaseUnit(other.getValue());
+
+        double baseSubtraction = thisBase - otherBase;
+        double result = targetUnit.convertFromBaseUnit(baseSubtraction);
 
         return new Quantity<>(result, targetUnit);
     }
 
-    // ✅ Equals
+    // Divide
+    public double divide(Quantity<U> other) {
+
+        if (other == null)
+            throw new NullPointerException(
+                    "Quantity and Target Unit must not be empty");
+
+        if (!this.unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException(
+                    "Cannot operate on different measurement categories");
+
+        double thisBase = this.unit.convertToBaseUnit(this.getValue());
+        double otherBase = other.unit.convertToBaseUnit(other.getValue());
+
+        if (Math.abs(otherBase) < EPSILON)
+            throw new ArithmeticException("Can not divisible by 0 or less");
+
+        return thisBase / otherBase;
+    }
+
+
+    // Equality Check
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
+        if (this == obj)
+            return true;
 
         if (obj == null || getClass() != obj.getClass())
             return false;
@@ -83,21 +115,18 @@ public class Quantity<U extends IMeasurable> {
         if (this.unit.getClass() != other.unit.getClass())
             return false;
 
-        double thisInBase = this.unit.convertToBaseUnit(this.value);
-        double otherInBase = other.getUnit().convertToBaseUnit(other.getValue());
+        double thisInFeet =
+                this.unit.convertToBaseUnit(this.value);
 
-        return Math.abs(thisInBase - otherInBase) < EPSILON;
+        double otherInFeet =
+                other.unit.convertToBaseUnit(other.getValue());
+
+        return Math.abs(thisInFeet - otherInFeet) < EPSILON;
     }
 
-    // ✅ HashCode
     @Override
     public int hashCode() {
         double base = unit.convertToBaseUnit(value);
         return Objects.hash(Math.round(base / EPSILON));
-    }
-
-    @Override
-    public String toString() {
-        return value + " " + unit;
     }
 }

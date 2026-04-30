@@ -1,35 +1,33 @@
-package com.quantity.measurement.enums.enumsImpl;
+package com.quantity.measurement.enumsImpl;
 
 import com.quantity.measurement.enums.IMeasurable;
 
-public enum LengthUnit implements IMeasurable {
+public enum WeightUnit implements IMeasurable {
 
-    FEET(1.0),
-    INCH(1.0 / 12),
-    YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
+    KILOGRAM(1.0),
+    GRAM(0.001),
+    POUND(1.0 / 2.20462);//
+    private final double toKilogramFactor;
 
-    private final double toFeetFactor;
-
-    LengthUnit(double toFeetFactor) {
-        this.toFeetFactor = toFeetFactor;
+    WeightUnit(double toKilogramFactor) {
+        this.toKilogramFactor = toKilogramFactor;
     }
 
     @Override
     public double getConversionFactor() {
-        return toFeetFactor;
+        return toKilogramFactor;
     }
 
     @Override
     public double convertToBaseUnit(double value) {
         validate(value);
-        return value * toFeetFactor;
+        return value * toKilogramFactor;
     }
 
     @Override
     public double convertFromBaseUnit(double value) {
         validate(value);
-        return value / toFeetFactor;
+        return value / toKilogramFactor;
     }
 
     private void validate(double value) {

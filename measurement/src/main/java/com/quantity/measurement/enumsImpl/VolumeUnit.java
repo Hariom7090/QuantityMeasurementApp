@@ -1,4 +1,4 @@
-package com.quantity.measurement.enums.enumsImpl;
+package com.quantity.measurement.enumsImpl;
 
 import com.quantity.measurement.enums.IMeasurable;
 
