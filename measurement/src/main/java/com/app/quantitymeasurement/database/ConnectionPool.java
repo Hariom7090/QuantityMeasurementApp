@@ -1,5 +1,8 @@
 package com.app.quantitymeasurement.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,13 +12,17 @@ import java.util.Queue;
 
 public class ConnectionPool {
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(ConnectionPool.class);
+
     private static ConnectionPool instance;
 
-    private final Queue<Connection> availableConnections = new LinkedList<>();
+    private final Queue<Connection> availableConnections =
+            new LinkedList<>();
 
     private static final int POOL_SIZE = 5;
 
-    // H2 In-Memory Database URL
+    // H2 Database Configuration
     private static final String DB_URL =
             "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
 
@@ -23,25 +30,44 @@ public class ConnectionPool {
     private static final String PASSWORD = "";
 
     private ConnectionPool() {
+
         try {
+
+            logger.info("Creating connection pool...");
 
             for (int i = 0; i < POOL_SIZE; i++) {
 
-                Connection connection = DriverManager.getConnection(
-                        DB_URL,
-                        USERNAME,
-                        PASSWORD
-                );
+                Connection connection =
+                        DriverManager.getConnection(
+                                DB_URL,
+                                USERNAME,
+                                PASSWORD
+                        );
 
                 availableConnections.add(connection);
+
+                logger.info(
+                        "Database connection {} created successfully",
+                        i + 1
+                );
             }
 
-            // Create table automatically
             initializeDatabase();
 
+            logger.info(
+                    "Connection pool initialized successfully"
+            );
+
         } catch (SQLException e) {
+
+            logger.error(
+                    "Error creating connection pool",
+                    e
+            );
+
             throw new RuntimeException(
-                    "Error creating connection pool", e
+                    "Error creating connection pool",
+                    e
             );
         }
     }
@@ -49,6 +75,11 @@ public class ConnectionPool {
     public static synchronized ConnectionPool getInstance() {
 
         if (instance == null) {
+
+            logger.info(
+                    "Creating new ConnectionPool instance"
+            );
+
             instance = new ConnectionPool();
         }
 
@@ -58,10 +89,17 @@ public class ConnectionPool {
     public synchronized Connection getConnection() {
 
         if (availableConnections.isEmpty()) {
+
+            logger.error(
+                    "No available database connections"
+            );
+
             throw new RuntimeException(
                     "No available database connections"
             );
         }
+
+        logger.info("Connection fetched from pool");
 
         return availableConnections.poll();
     }
@@ -71,7 +109,12 @@ public class ConnectionPool {
     ) {
 
         if (connection != null) {
+
             availableConnections.offer(connection);
+
+            logger.info(
+                    "Connection returned to pool"
+            );
         }
     }
 
@@ -90,7 +133,8 @@ public class ConnectionPool {
 
         try {
 
-            Connection connection = availableConnections.peek();
+            Connection connection =
+                    availableConnections.peek();
 
             if (connection != null) {
 
@@ -100,12 +144,22 @@ public class ConnectionPool {
                 statement.execute(createTableQuery);
 
                 statement.close();
+
+                logger.info(
+                        "Table quantity_measurement_entity created successfully"
+                );
             }
 
         } catch (SQLException e) {
 
+            logger.error(
+                    "Failed to initialize database",
+                    e
+            );
+
             throw new RuntimeException(
-                    "Failed to initialize database", e
+                    "Failed to initialize database",
+                    e
             );
         }
     }
