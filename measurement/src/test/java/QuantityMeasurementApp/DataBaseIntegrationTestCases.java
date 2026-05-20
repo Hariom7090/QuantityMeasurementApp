@@ -1,14 +1,14 @@
 package QuantityMeasurementApp;
 
 import com.app.quantitymeasurement.controller.QuantityMeasurementController;
-import com.app.quantitymeasurement.database.ConnectionPool;
+import com.app.quantitymeasurement.dump.ConnectionPool;
 import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.exception.DatabaseException;
-import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.app.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
-import com.app.quantitymeasurement.repository.QuantityMeasurementDatabaseRepository;
-import com.app.quantitymeasurement.service.Service;
+import com.app.quantitymeasurement.dump.IQuantityMeasurementRepository;
+import com.app.quantitymeasurement.dump.QuantityMeasurementCacheRepository;
+import com.app.quantitymeasurement.dump.QuantityMeasurementDatabaseRepository;
+import com.app.quantitymeasurement.service.QuantityMeasurementService;
 import com.app.quantitymeasurement.serviceImpl.ServiceImpl;
 
 import org.junit.jupiter.api.Test;

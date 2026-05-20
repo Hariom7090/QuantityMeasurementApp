@@ -1,63 +1,88 @@
 package com.app.quantitymeasurement.serviceImpl;
 
 import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.enums.IMeasurable;
 import com.app.quantitymeasurement.enumsImpl.LengthUnit;
+import com.app.quantitymeasurement.enumsImpl.TemperatureUnit;
 import com.app.quantitymeasurement.enumsImpl.VolumeUnit;
 import com.app.quantitymeasurement.enumsImpl.WeightUnit;
-import com.app.quantitymeasurement.enumsImpl.TemperatureUnit;
 import com.app.quantitymeasurement.exception.QuantityMeasurementException;
 import com.app.quantitymeasurement.model.Quantity;
-import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.app.quantitymeasurement.service.Service;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.repository.QuantityMeasurementRepository;
+import com.app.quantitymeasurement.service.QuantityMeasurementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-public class ServiceImpl implements Service {
+import java.util.List;
+
+@Service
+public class ServiceImpl
+        implements QuantityMeasurementService {
 
     private static final Logger logger =
             LoggerFactory.getLogger(ServiceImpl.class);
 
-    private final IQuantityMeasurementRepository repository;
+    private final QuantityMeasurementRepository repository;
 
-    public ServiceImpl(IQuantityMeasurementRepository repository) {
+    public ServiceImpl(
+            QuantityMeasurementRepository repository) {
         this.repository = repository;
-        logger.info("ServiceImpl initialized");
     }
 
-    private IMeasurable getUnit(String unit, String type)
-            throws QuantityMeasurementException {
-
-        logger.debug("Getting unit: {} for type: {}", unit, type);
+    private IMeasurable getUnit(
+            String unit,
+            String type) {
 
         if (unit == null || type == null) {
-            logger.error("Unit or type is null");
             throw new QuantityMeasurementException(
                     "Invalid unit or type"
             );
         }
 
-        return switch (type.toUpperCase()) {
-            case "LENGTH" ->
-                    LengthUnit.valueOf(unit.toUpperCase());
+        try {
 
-            case "WEIGHT" ->
-                    WeightUnit.valueOf(unit.toUpperCase());
+            return switch (type.toUpperCase()) {
 
-            case "VOLUME" ->
-                    VolumeUnit.valueOf(unit.toUpperCase());
+                case "LENGTH",
+                     "LENGTHUNIT" ->
+                        LengthUnit.valueOf(
+                                unit.toUpperCase()
+                        );
 
-            case "TEMPERATURE" ->
-                    TemperatureUnit.valueOf(unit.toUpperCase());
+                case "WEIGHT",
+                     "WEIGHTUNIT" ->
+                        WeightUnit.valueOf(
+                                unit.toUpperCase()
+                        );
 
-            default -> {
-                logger.error("Invalid measurement type: {}", type);
-                throw new QuantityMeasurementException(
-                        "Invalid type"
-                );
-            }
-        };
+                case "VOLUME",
+                     "VOLUMEUNIT" ->
+                        VolumeUnit.valueOf(
+                                unit.toUpperCase()
+                        );
+
+                case "TEMPERATURE",
+                     "TEMPERATUREUNIT" ->
+                        TemperatureUnit.valueOf(
+                                unit.toUpperCase()
+                        );
+
+                default ->
+                        throw new QuantityMeasurementException(
+                                "Invalid measurement type: " + type
+                        );
+            };
+
+        } catch (IllegalArgumentException e) {
+
+            throw new QuantityMeasurementException(
+                    "Invalid unit '" + unit +
+                            "' for measurement type '" +
+                            type + "'"
+            );
+        }
     }
 
     @Override
@@ -68,27 +93,22 @@ public class ServiceImpl implements Service {
 
         try {
 
-            logger.info(
-                    "Addition started: {} {} + {} {}",
-                    q1.getValue(),
-                    q1.getUnit(),
-                    q2.getValue(),
-                    q2.getUnit()
-            );
-
             IMeasurable u1 =
-                    getUnit(q1.getUnit(),
+                    getUnit(
+                            q1.getUnit(),
                             q1.getMeasurementType());
 
             IMeasurable u2 =
-                    getUnit(q2.getUnit(),
+                    getUnit(
+                            q2.getUnit(),
                             q2.getMeasurementType());
 
             Quantity<?> result =
                     new Quantity<>(q1.getValue(), u1)
                             .add(
                                     new Quantity<>(
-                                            q2.getValue(), u2
+                                            q2.getValue(),
+                                            u2
                                     ),
                                     getUnit(
                                             targetUnit,
@@ -96,17 +116,11 @@ public class ServiceImpl implements Service {
                                     )
                             );
 
-            logger.info(
-                    "Addition successful. Result = {} {}",
-                    result.getValue(),
-                    targetUnit
-            );
-
             repository.save(
                     new QuantityMeasurementEntity(
                             "ADD",
-                            "input",
-                            "success"
+                            q1.toString() + " + " + q2,
+                            String.valueOf(result.getValue())
                     )
             );
 
@@ -117,12 +131,6 @@ public class ServiceImpl implements Service {
             );
 
         } catch (Exception e) {
-
-            logger.error(
-                    "Addition failed: {}",
-                    e.getMessage(),
-                    e
-            );
 
             repository.save(
                     new QuantityMeasurementEntity(
@@ -146,14 +154,6 @@ public class ServiceImpl implements Service {
 
         try {
 
-            logger.info(
-                    "Subtraction started: {} {} - {} {}",
-                    q1.getValue(),
-                    q1.getUnit(),
-                    q2.getValue(),
-                    q2.getUnit()
-            );
-
             IMeasurable u1 =
                     getUnit(q1.getUnit(),
                             q1.getMeasurementType());
@@ -166,7 +166,8 @@ public class ServiceImpl implements Service {
                     new Quantity<>(q1.getValue(), u1)
                             .subtract(
                                     new Quantity<>(
-                                            q2.getValue(), u2
+                                            q2.getValue(),
+                                            u2
                                     ),
                                     getUnit(
                                             targetUnit,
@@ -174,17 +175,11 @@ public class ServiceImpl implements Service {
                                     )
                             );
 
-            logger.info(
-                    "Subtraction successful. Result = {} {}",
-                    result.getValue(),
-                    targetUnit
-            );
-
             repository.save(
                     new QuantityMeasurementEntity(
                             "SUBTRACT",
-                            "input",
-                            "success"
+                            q1 + " - " + q2,
+                            String.valueOf(result.getValue())
                     )
             );
 
@@ -195,12 +190,6 @@ public class ServiceImpl implements Service {
             );
 
         } catch (Exception e) {
-
-            logger.error(
-                    "Subtraction failed: {}",
-                    e.getMessage(),
-                    e
-            );
 
             repository.save(
                     new QuantityMeasurementEntity(
@@ -223,14 +212,6 @@ public class ServiceImpl implements Service {
 
         try {
 
-            logger.info(
-                    "Division started: {} {} / {} {}",
-                    q1.getValue(),
-                    q1.getUnit(),
-                    q2.getValue(),
-                    q2.getUnit()
-            );
-
             IMeasurable u1 =
                     getUnit(q1.getUnit(),
                             q1.getMeasurementType());
@@ -248,16 +229,11 @@ public class ServiceImpl implements Service {
                                     )
                             );
 
-            logger.info(
-                    "Division successful. Result = {}",
-                    result
-            );
-
             repository.save(
                     new QuantityMeasurementEntity(
                             "DIVIDE",
-                            "input",
-                            "success"
+                            q1 + " / " + q2,
+                            String.valueOf(result)
                     )
             );
 
@@ -268,12 +244,6 @@ public class ServiceImpl implements Service {
             );
 
         } catch (Exception e) {
-
-            logger.error(
-                    "Division failed: {}",
-                    e.getMessage(),
-                    e
-            );
 
             repository.save(
                     new QuantityMeasurementEntity(
@@ -296,13 +266,6 @@ public class ServiceImpl implements Service {
 
         try {
 
-            logger.info(
-                    "Conversion started: {} {} to {}",
-                    q.getValue(),
-                    q.getUnit(),
-                    targetUnit
-            );
-
             IMeasurable u =
                     getUnit(q.getUnit(),
                             q.getMeasurementType());
@@ -316,17 +279,11 @@ public class ServiceImpl implements Service {
                                     )
                             );
 
-            logger.info(
-                    "Conversion successful. Result = {} {}",
-                    result.getValue(),
-                    targetUnit
-            );
-
             repository.save(
                     new QuantityMeasurementEntity(
                             "CONVERT",
-                            "input",
-                            "success"
+                            q.toString(),
+                            String.valueOf(result.getValue())
                     )
             );
 
@@ -337,12 +294,6 @@ public class ServiceImpl implements Service {
             );
 
         } catch (Exception e) {
-
-            logger.error(
-                    "Conversion failed: {}",
-                    e.getMessage(),
-                    e
-            );
 
             repository.save(
                     new QuantityMeasurementEntity(
@@ -365,27 +316,6 @@ public class ServiceImpl implements Service {
 
         try {
 
-            logger.info(
-                    "Comparison started: {} {} and {} {}",
-                    q1.getValue(),
-                    q1.getUnit(),
-                    q2.getValue(),
-                    q2.getUnit()
-            );
-
-            if (!q1.getMeasurementType()
-                    .equalsIgnoreCase(
-                            q2.getMeasurementType())) {
-
-                logger.warn(
-                        "Cross-category comparison attempted"
-                );
-
-                throw new Exception(
-                        "Cross-category comparison not allowed"
-                );
-            }
-
             IMeasurable u1 =
                     getUnit(q1.getUnit(),
                             q1.getMeasurementType());
@@ -403,16 +333,11 @@ public class ServiceImpl implements Service {
                                     )
                             );
 
-            logger.info(
-                    "Comparison successful. Result = {}",
-                    result
-            );
-
             repository.save(
                     new QuantityMeasurementEntity(
                             "COMPARE",
-                            "input",
-                            "success"
+                            q1 + " vs " + q2,
+                            String.valueOf(result)
                     )
             );
 
@@ -423,12 +348,6 @@ public class ServiceImpl implements Service {
             );
 
         } catch (Exception e) {
-
-            logger.error(
-                    "Comparison failed: {}",
-                    e.getMessage(),
-                    e
-            );
 
             repository.save(
                     new QuantityMeasurementEntity(
@@ -442,5 +361,26 @@ public class ServiceImpl implements Service {
                     e.getMessage()
             );
         }
+    }
+
+    @Override
+    public List<QuantityMeasurementEntity>
+    getHistoryByOperation(String operation) {
+
+        return repository.findByOperation(operation);
+    }
+
+    @Override
+    public List<QuantityMeasurementEntity>
+    getErrorHistory() {
+
+        return repository.findByErrorTrue();
+    }
+
+    @Override
+    public long countByOperation(String operation) {
+
+        return repository.findByOperation(operation)
+                .size();
     }
 }

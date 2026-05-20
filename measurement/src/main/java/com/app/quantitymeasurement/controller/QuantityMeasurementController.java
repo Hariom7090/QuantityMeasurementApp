@@ -1,125 +1,78 @@
 package com.app.quantitymeasurement.controller;
 
 import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.service.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.app.quantitymeasurement.service.QuantityMeasurementService;
+import com.app.quantitymeasurement.dto.QuantityInputDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/api/v1/quantities")
 public class QuantityMeasurementController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(
-                    QuantityMeasurementController.class
-            );
+    private final QuantityMeasurementService service;
 
-    private final Service service;
-
-    public QuantityMeasurementController(Service service) {
+    @Autowired
+    public QuantityMeasurementController(
+            QuantityMeasurementService service
+    ) {
         this.service = service;
-        logger.info("QuantityMeasurementController initialized");
     }
 
-    public QuantityDTO performAdd(
-            QuantityDTO q1,
-            QuantityDTO q2,
-            String target
+    // ADD
+    @PostMapping("/add")
+    public QuantityDTO add(
+            @RequestBody QuantityInputDTO inputDTO
     ) {
-
-        logger.info(
-                "Controller received ADD request: {} {} + {} {}",
-                q1.getValue(),
-                q1.getUnit(),
-                q2.getValue(),
-                q2.getUnit()
+        return service.add(
+                inputDTO.getThisQuantityDTO(),
+                inputDTO.getThatQuantityDTO(),
+                inputDTO.getTargetUnit()
         );
-
-        QuantityDTO result =
-                service.add(q1, q2, target);
-
-        logger.info(
-                "ADD operation completed"
-        );
-
-        return result;
     }
 
-    public QuantityDTO performSubtract(
-            QuantityDTO q1,
-            QuantityDTO q2,
-            String target
+    // SUBTRACT
+    @PostMapping("/subtract")
+    public QuantityDTO subtract(
+            @RequestBody QuantityInputDTO inputDTO
     ) {
-
-        logger.info(
-                "Controller received SUBTRACT request"
+        return service.subtract(
+                inputDTO.getThisQuantityDTO(),
+                inputDTO.getThatQuantityDTO(),
+                inputDTO.getTargetUnit()
         );
-
-        QuantityDTO result =
-                service.subtract(q1, q2, target);
-
-        logger.info(
-                "SUBTRACT operation completed"
-        );
-
-        return result;
     }
 
-    public QuantityDTO performDivide(
-            QuantityDTO q1,
-            QuantityDTO q2
+    // DIVIDE
+    @PostMapping("/divide")
+    public QuantityDTO divide(
+            @RequestBody QuantityInputDTO inputDTO
     ) {
-
-        logger.info(
-                "Controller received DIVIDE request"
+        return service.divide(
+                inputDTO.getThisQuantityDTO(),
+                inputDTO.getThatQuantityDTO()
         );
-
-        QuantityDTO result =
-                service.divide(q1, q2);
-
-        logger.info(
-                "DIVIDE operation completed"
-        );
-
-        return result;
     }
 
-    public QuantityDTO performConvert(
-            QuantityDTO q,
-            String target
+    // CONVERT
+    @PostMapping("/convert")
+    public QuantityDTO convert(
+            @RequestBody QuantityInputDTO inputDTO
     ) {
-
-        logger.info(
-                "Controller received CONVERT request: {} {} -> {}",
-                q.getValue(),
-                q.getUnit(),
-                target
+        return service.convert(
+                inputDTO.getThisQuantityDTO(),
+                inputDTO.getTargetUnit()
         );
-
-        QuantityDTO result =
-                service.convert(q, target);
-
-        logger.info(
-                "CONVERT operation completed"
-        );
-
-        return result;
     }
 
-    public QuantityDTO performCompare(
-            QuantityDTO q1,
-            QuantityDTO q2
+    // COMPARE
+    @PostMapping("/compare")
+    public QuantityDTO compare(
+            @RequestBody QuantityInputDTO inputDTO
     ) {
-
-        logger.info(
-                "Controller received COMPARE request"
+        return service.compare(
+                inputDTO.getThisQuantityDTO(),
+                inputDTO.getThatQuantityDTO()
         );
-
-        QuantityDTO result =
-                service.compare(q1, q2);
-
-        logger.info(
-                "COMPARE operation completed"
-        );
-
-        return result;
     }
 }

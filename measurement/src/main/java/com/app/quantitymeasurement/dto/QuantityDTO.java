@@ -1,45 +1,98 @@
 package com.app.quantitymeasurement.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class QuantityDTO {
 
-    private double value;
+    @NotNull(message = "Value cannot be null")
+    private Double value;
+
+    @NotBlank(message = "Unit cannot be empty")
     private String unit;
+
+    @NotBlank(message = "Measurement type cannot be empty")
     private String measurementType;
+
     private boolean error;
     private String errorMessage;
 
-    public QuantityDTO(double value, String unit, String measurementType) {
+    // Default constructor (important for JSON)
+    public QuantityDTO() {
+    }
+
+    // Success constructor
+    public QuantityDTO(
+            double value,
+            String unit,
+            String measurementType
+    ) {
         this.value = value;
         this.unit = unit;
         this.measurementType = measurementType;
     }
 
-    public QuantityDTO(boolean error, String errorMessage) {
+    // Error constructor
+    public QuantityDTO(
+            boolean error,
+            String errorMessage
+    ) {
         this.error = error;
         this.errorMessage = errorMessage;
     }
 
-    // public QuantityDTO(double d, WeightUnit kilogram, double e, WeightUnit gram)
-    // {
-    // }
-
-    public double getValue() {
+    public Double getValue() {
         return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
     }
 
     public String getUnit() {
         return unit;
     }
 
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     public String getMeasurementType() {
         return measurementType;
+    }
+
+    public void setMeasurementType(
+            String measurementType
+    ) {
+        this.measurementType =
+                measurementType;
     }
 
     public boolean isError() {
         return error;
     }
 
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public void setErrorMessage(
+            String errorMessage
+    ) {
+        this.errorMessage =
+                errorMessage;
+    }
+
+    @Override
+    public String toString() {
+        return "QuantityDTO{" +
+                "value=" + value +
+                ", unit='" + unit + '\'' +
+                ", measurementType='" + measurementType + '\'' +
+                '}';
     }
 }

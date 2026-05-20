@@ -1,4 +1,4 @@
-package com.app.quantitymeasurement.database;
+package com.app.quantitymeasurement.dump;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

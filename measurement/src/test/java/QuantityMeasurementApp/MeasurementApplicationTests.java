@@ -1,6 +1,6 @@
 package QuantityMeasurementApp;
 
-import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.enums.IMeasurable;
 import com.app.quantitymeasurement.enumsImpl.VolumeUnit;
 import com.app.quantitymeasurement.enumsImpl.WeightUnit;
@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.quantitymeasurement.controller.QuantityMeasurementController;
 import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
-import com.app.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
-import com.app.quantitymeasurement.service.Service;
+import com.app.quantitymeasurement.dump.IQuantityMeasurementRepository;
+import com.app.quantitymeasurement.dump.QuantityMeasurementCacheRepository;
+
 import com.app.quantitymeasurement.serviceImpl.ServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
