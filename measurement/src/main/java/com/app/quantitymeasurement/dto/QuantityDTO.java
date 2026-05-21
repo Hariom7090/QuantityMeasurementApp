@@ -1,42 +1,23 @@
 package com.app.quantitymeasurement.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public class QuantityDTO {
 
-    @NotNull(message = "Value cannot be null")
     private Double value;
-
-    @NotBlank(message = "Unit cannot be empty")
     private String unit;
-
-    @NotBlank(message = "Measurement type cannot be empty")
     private String measurementType;
 
     private boolean error;
     private String errorMessage;
 
-    // Default constructor (important for JSON)
-    public QuantityDTO() {
-    }
+    public QuantityDTO() {}
 
-    // Success constructor
-    public QuantityDTO(
-            double value,
-            String unit,
-            String measurementType
-    ) {
+    public QuantityDTO(Double value, String unit, String measurementType) {
         this.value = value;
         this.unit = unit;
         this.measurementType = measurementType;
     }
 
-    // Error constructor
-    public QuantityDTO(
-            boolean error,
-            String errorMessage
-    ) {
+    public QuantityDTO(boolean error, String errorMessage) {
         this.error = error;
         this.errorMessage = errorMessage;
     }
@@ -61,11 +42,8 @@ public class QuantityDTO {
         return measurementType;
     }
 
-    public void setMeasurementType(
-            String measurementType
-    ) {
-        this.measurementType =
-                measurementType;
+    public void setMeasurementType(String measurementType) {
+        this.measurementType = measurementType;
     }
 
     public boolean isError() {
@@ -80,19 +58,7 @@ public class QuantityDTO {
         return errorMessage;
     }
 
-    public void setErrorMessage(
-            String errorMessage
-    ) {
-        this.errorMessage =
-                errorMessage;
-    }
-
-    @Override
-    public String toString() {
-        return "QuantityDTO{" +
-                "value=" + value +
-                ", unit='" + unit + '\'' +
-                ", measurementType='" + measurementType + '\'' +
-                '}';
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

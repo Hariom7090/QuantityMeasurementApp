@@ -1,8 +1,8 @@
 package com.app.quantitymeasurement.controller;
 
 import com.app.quantitymeasurement.dto.QuantityDTO;
-import com.app.quantitymeasurement.service.QuantityMeasurementService;
 import com.app.quantitymeasurement.dto.QuantityInputDTO;
+import com.app.quantitymeasurement.service.QuantityMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +13,12 @@ public class QuantityMeasurementController {
     private final QuantityMeasurementService service;
 
     @Autowired
-    public QuantityMeasurementController(
-            QuantityMeasurementService service
-    ) {
+    public QuantityMeasurementController(QuantityMeasurementService service) {
         this.service = service;
     }
 
-    // ADD
     @PostMapping("/add")
-    public QuantityDTO add(
-            @RequestBody QuantityInputDTO inputDTO
-    ) {
+    public QuantityDTO add(@RequestBody QuantityInputDTO inputDTO) {
         return service.add(
                 inputDTO.getThisQuantityDTO(),
                 inputDTO.getThatQuantityDTO(),
@@ -31,11 +26,8 @@ public class QuantityMeasurementController {
         );
     }
 
-    // SUBTRACT
     @PostMapping("/subtract")
-    public QuantityDTO subtract(
-            @RequestBody QuantityInputDTO inputDTO
-    ) {
+    public QuantityDTO subtract(@RequestBody QuantityInputDTO inputDTO) {
         return service.subtract(
                 inputDTO.getThisQuantityDTO(),
                 inputDTO.getThatQuantityDTO(),
@@ -43,33 +35,24 @@ public class QuantityMeasurementController {
         );
     }
 
-    // DIVIDE
     @PostMapping("/divide")
-    public QuantityDTO divide(
-            @RequestBody QuantityInputDTO inputDTO
-    ) {
+    public QuantityDTO divide(@RequestBody QuantityInputDTO inputDTO) {
         return service.divide(
                 inputDTO.getThisQuantityDTO(),
                 inputDTO.getThatQuantityDTO()
         );
     }
 
-    // CONVERT
     @PostMapping("/convert")
-    public QuantityDTO convert(
-            @RequestBody QuantityInputDTO inputDTO
-    ) {
+    public QuantityDTO convert(@RequestBody QuantityInputDTO inputDTO) {
         return service.convert(
                 inputDTO.getThisQuantityDTO(),
                 inputDTO.getTargetUnit()
         );
     }
 
-    // COMPARE
     @PostMapping("/compare")
-    public QuantityDTO compare(
-            @RequestBody QuantityInputDTO inputDTO
-    ) {
+    public QuantityDTO compare(@RequestBody QuantityInputDTO inputDTO) {
         return service.compare(
                 inputDTO.getThisQuantityDTO(),
                 inputDTO.getThatQuantityDTO()

@@ -1,4 +1,4 @@
-package QuantityMeasurementApp;
+package com.app.quantitymeasurement;
 
 import com.app.quantitymeasurement.model.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.enums.IMeasurable;
@@ -21,6 +21,7 @@ import com.app.quantitymeasurement.dump.QuantityMeasurementCacheRepository;
 import com.app.quantitymeasurement.serviceImpl.ServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.stereotype.Service;
 
 class MeasurementApplicationTests {
     private IQuantityMeasurementRepository repository;

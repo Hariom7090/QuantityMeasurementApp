@@ -1,4 +1,4 @@
-package QuantityMeasurementApp;
+package com.app.quantitymeasurement;
 
 import com.app.quantitymeasurement.controller.QuantityMeasurementController;
 import com.app.quantitymeasurement.dump.ConnectionPool;
@@ -10,6 +10,8 @@ import com.app.quantitymeasurement.dump.QuantityMeasurementCacheRepository;
 import com.app.quantitymeasurement.dump.QuantityMeasurementDatabaseRepository;
 import com.app.quantitymeasurement.service.QuantityMeasurementService;
 import com.app.quantitymeasurement.serviceImpl.ServiceImpl;
+import org.springframework.stereotype.Service;
+
 
 import org.junit.jupiter.api.Test;
 

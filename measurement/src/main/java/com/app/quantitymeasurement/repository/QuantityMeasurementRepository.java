@@ -8,7 +8,9 @@ import java.util.List;
 
 @Repository
 public interface QuantityMeasurementRepository
-        extends JpaRepository<QuantityMeasurementEntity, Long> {
+        extends JpaRepository<
+        QuantityMeasurementEntity,
+        Long> {
 
     List<QuantityMeasurementEntity>
     findByOperation(String operation);
